@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_intervention_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang or o.env.lang)"/>
+            <div class="page">
+                <h2>Bon d'intervention <span t-field="o.name"/></h2>
+
+                <div class="row mt-4 mb-4">
+                    <div class="col-6">
+                        <strong>Client</strong>
+                        <div t-field="o.partner_id" t-options="{'widget': 'contact', 'fields': ['address', 'name', 'phone'], 'no_marker': True}"/>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless">
+                            <tr><td><strong>Type</strong></td><td><span t-field="o.intervention_type"/></td></tr>
+                            <tr><td><strong>Priorité</strong></td><td><span t-field="o.priority"/></td></tr>
+                            <tr><td><strong>Technicien</strong></td><td><span t-field="o.technician_id"/></td></tr>
+                            <tr><td><strong>Date prévue</strong></td><td><span t-field="o.date_planned"/></td></tr>
+                            <tr t-if="o.date_start"><td><strong>Début</strong></td><td><span t-field="o.date_start"/></td></tr>
+                            <tr t-if="o.date_end"><td><strong>Fin</strong></td><td><span t-field="o.date_end"/></td></tr>
+                            <tr><td><strong>État</strong></td><td><span t-field="o.state"/></td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div t-if="o.description" class="mb-3">
+                    <h5>Problème signalé</h5>
+                    <div t-field="o.description"/>
+                </div>
+
+                <h5>Matériel et main-d'œuvre</h5>
+                <table class="table table-sm o_main_table">
+                    <thead>
+                        <tr><th>Article</th><th class="text-end">Quantité</th><th class="text-end">Prix unitaire</th><th class="text-end">Sous-total</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.line_ids" t-as="line">
+                            <td><span t-field="line.name"/></td>
+                            <td class="text-end"><span t-field="line.quantity"/></td>
+                            <td class="text-end"><span t-field="line.price_unit"/></td>
+                            <td class="text-end"><span t-field="line.subtotal"/></td>
+                        </tr>
+                        <tr>
+                            <td>Main-d'œuvre (<span t-out="o.duration_real if o.state == 'done' and o.duration_real else o.duration_planned" t-options="{'widget': 'float_time'}"/> h)</td>
+                            <td/>
+                            <td class="text-end"><span t-field="o.hourly_rate"/> / h</td>
+                            <td class="text-end"><span t-field="o.amount_labor"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row justify-content-end">
+                    <div class="col-5">
+                        <table class="table table-sm">
+                            <tr class="border-black o_total"><td><strong>Total</strong></td><td class="text-end"><strong t-field="o.amount_total"/></td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div t-if="o.report_notes" class="mt-3">
+                    <h5>Compte rendu du technicien</h5>
+                    <div t-field="o.report_notes"/>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-6"><strong>Signature du technicien</strong><div style="height: 80px; border-bottom: 1px solid #999;"/></div>
+                    <div class="col-6"><strong>Signature du client</strong><div style="height: 80px; border-bottom: 1px solid #999;"/></div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_intervention">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="intervention_management.report_intervention_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

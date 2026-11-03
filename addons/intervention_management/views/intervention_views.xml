@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======================= Liste ======================= -->
+    <record id="view_intervention_tree" model="ir.ui.view">
+        <field name="name">intervention.intervention.tree</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <tree string="Interventions" decoration-muted="state == 'cancel'" decoration-danger="is_late"
+                  decoration-success="state == 'done'" decoration-info="state == 'in_progress'" sample="1">
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="intervention_type"/>
+                <field name="technician_id" optional="show"/>
+                <field name="date_planned"/>
+                <field name="duration_planned" widget="float_time" optional="hide"/>
+                <field name="amount_total" sum="Total" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="is_late" column_invisible="True"/>
+                <field name="state" widget="badge" decoration-info="state == 'planned'" decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ===================== Formulaire ===================== -->
+    <record id="view_intervention_form" model="ir.ui.view">
+        <field name="name">intervention.intervention.form</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <form string="Intervention">
+                <header>
+                    <button name="action_plan" string="Planifier" type="object" class="btn-primary" invisible="state != 'draft'"
+                            groups="intervention_management.group_intervention_manager"/>
+                    <button name="action_start" string="Démarrer" type="object" class="btn-primary" invisible="state != 'planned'"/>
+                    <button name="action_done" string="Terminer" type="object" class="btn-primary" invisible="state != 'in_progress'"/>
+                    <button name="%(intervention_management.action_report_intervention)d" string="Imprimer le bon" type="action"
+                            invisible="state == 'draft'"/>
+                    <button name="action_cancel" string="Annuler" type="object" invisible="state in ('done', 'cancel')"
+                            groups="intervention_management.group_intervention_manager"/>
+                    <button name="action_reset_draft" string="Remettre en brouillon" type="object" invisible="state != 'cancel'"
+                            groups="intervention_management.group_intervention_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,planned,in_progress,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="En retard" bg_color="text-bg-danger" invisible="not is_late"/>
+                    <widget name="web_ribbon" title="Annulée" bg_color="text-bg-secondary" invisible="state != 'cancel'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <field name="priority" widget="priority"/>
+                    </div>
+                    <group>
+                        <group string="Client">
+                            <field name="partner_id" readonly="state in ('done', 'cancel')"/>
+                            <field name="address"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="intervention_type" readonly="state in ('done', 'cancel')"/>
+                        </group>
+                        <group string="Planification">
+                            <field name="technician_id" readonly="state not in ('draft', 'planned')"
+                                   options="{'no_create': True}"/>
+                            <field name="date_planned" readonly="state not in ('draft', 'planned')"/>
+                            <field name="duration_planned" widget="float_time" readonly="state not in ('draft', 'planned')"/>
+                            <field name="date_start" invisible="not date_start"/>
+                            <field name="date_end" invisible="not date_end"/>
+                            <field name="duration_real" widget="float_time" invisible="state != 'done'"/>
+                            <field name="is_late" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Décrivez le problème signalé par le client…"/>
+                        </page>
+                        <page string="Matériel et montant" name="material">
+                            <field name="line_ids" readonly="state in ('done', 'cancel')">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="subtotal" sum="Total matériel"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="hourly_rate"/>
+                                <field name="amount_material"/>
+                                <field name="amount_labor"/>
+                                <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page string="Compte rendu" name="report">
+                            <field name="report_notes" placeholder="Travaux réalisés, observations, recommandations…"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======================= Kanban ======================= -->
+    <record id="view_intervention_kanban" model="ir.ui.view">
+        <field name="name">intervention.intervention.kanban</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" quick_create="false" sample="1"
+                    records_draggable="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="technician_id"/>
+                <field name="date_planned"/>
+                <field name="priority"/>
+                <field name="color"/>
+                <field name="is_late"/>
+                <field name="amount_total"/>
+                <field name="currency_id"/>
+                <field name="intervention_type"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="{{!selection_mode ? kanban_color(record.color.raw_value) : ''}} oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="partner_id"/></strong>
+                                        <div class="text-muted small"><field name="name"/> · <field name="intervention_type"/></div>
+                                    </div>
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                                <div class="mt-1 small">
+                                    <i class="fa fa-calendar me-1" title="Date prévue"/>
+                                    <t t-if="record.date_planned.raw_value"><field name="date_planned"/></t>
+                                    <t t-else=""><span class="text-muted">Non planifiée</span></t>
+                                    <span t-if="record.is_late.raw_value" class="badge text-bg-danger ms-1">En retard</span>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left small">
+                                        <i class="fa fa-wrench me-1" title="Technicien"/>
+                                        <t t-if="record.technician_id.raw_value"><field name="technician_id"/></t>
+                                        <t t-else=""><span class="text-warning">À affecter</span></t>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right small fw-bold">
+                                        <field name="amount_total" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ===================== Calendrier ===================== -->
+    <record id="view_intervention_calendar" model="ir.ui.view">
+        <field name="name">intervention.intervention.calendar</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <calendar string="Planning" date_start="date_planned" date_stop="date_planned_end" color="technician_id"
+                      mode="week" quick_create="0" event_open_popup="1">
+                <field name="partner_id"/>
+                <field name="technician_id" filters="1"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ================= Analyse (graphique / pivot) ================= -->
+    <record id="view_intervention_pivot" model="ir.ui.view">
+        <field name="name">intervention.intervention.pivot</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des interventions" sample="1">
+                <field name="technician_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_intervention_graph" model="ir.ui.view">
+        <field name="name">intervention.intervention.graph</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <graph string="Interventions par technicien" type="bar" sample="1">
+                <field name="technician_id"/>
+                <field name="state"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ====================== Recherche ====================== -->
+    <record id="view_intervention_search" model="ir.ui.view">
+        <field name="name">intervention.intervention.search</field>
+        <field name="model">intervention.intervention</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une intervention">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="technician_id"/>
+                <filter string="Mes interventions" name="my" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="À planifier" name="to_plan" domain="[('state', '=', 'draft')]"/>
+                <filter string="Planifiées" name="planned" domain="[('state', '=', 'planned')]"/>
+                <filter string="En cours" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="En retard" name="late" domain="[('is_late', '=', True)]"/>
+                <separator/>
+                <filter string="Urgentes" name="urgent" domain="[('priority', 'in', ('2', '3'))]"/>
+                <filter string="Date prévue" name="date_planned" date="date_planned"/>
+                <filter string="Archivées / annulées" name="cancelled" domain="[('state', '=', 'cancel')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Technicien" name="group_technician" context="{'group_by': 'technician_id'}"/>
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'intervention_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ======================= Actions ======================= -->
+    <record id="action_intervention" model="ir.actions.act_window">
+        <field name="name">Interventions</field>
+        <field name="res_model">intervention.intervention</field>
+        <field name="view_mode">kanban,tree,form,calendar,pivot,graph</field>
+        <field name="search_view_id" ref="view_intervention_search"/>
+        <field name="domain">[('state', '!=', 'cancel')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Créez votre première intervention</p>
+            <p>Planifiez les interventions chez vos clients, affectez un technicien et suivez leur avancement.</p>
+        </field>
+    </record>
+
+    <record id="action_intervention_planning" model="ir.actions.act_window">
+        <field name="name">Planning</field>
+        <field name="res_model">intervention.intervention</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="domain">[('state', 'in', ('planned', 'in_progress', 'done'))]</field>
+    </record>
+
+    <record id="action_intervention_analysis" model="ir.actions.act_window">
+        <field name="name">Analyse</field>
+        <field name="res_model">intervention.intervention</field>
+        <field name="view_mode">pivot,graph</field>
+    </record>
+</odoo>

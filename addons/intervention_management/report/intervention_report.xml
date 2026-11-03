@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_intervention" model="ir.actions.report">
+        <field name="name">Bon d'intervention</field>
+        <field name="model">intervention.intervention</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">intervention_management.report_intervention</field>
+        <field name="report_file">intervention_management.report_intervention</field>
+        <field name="print_report_name">'Bon - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_intervention_intervention"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

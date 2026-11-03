@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_intervention_root" name="Interventions" web_icon="intervention_management,static/description/icon.png"
+              groups="group_intervention_technician" sequence="40"/>
+    <menuitem id="menu_intervention_main" name="Interventions" parent="menu_intervention_root"
+              action="action_intervention" sequence="10"/>
+    <menuitem id="menu_intervention_planning" name="Planning" parent="menu_intervention_root"
+              action="action_intervention_planning" sequence="20"/>
+    <menuitem id="menu_intervention_reporting" name="Analyse" parent="menu_intervention_root"
+              action="action_intervention_analysis" sequence="30" groups="group_intervention_manager"/>
+    <menuitem id="menu_intervention_config" name="Configuration" parent="menu_intervention_root" sequence="90"
+              groups="group_intervention_manager"/>
+    <menuitem id="menu_intervention_technicians" name="Techniciens" parent="menu_intervention_config"
+              action="action_technician" sequence="10"/>
+</odoo>

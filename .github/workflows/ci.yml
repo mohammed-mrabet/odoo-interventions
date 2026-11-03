@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  odoo-tests:
+    name: Tests du module (Odoo 17)
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U odoo" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installation du module et tests
+        run: |
+          docker run --rm --network host -v "$PWD/addons:/mnt/extra-addons:ro" odoo:17.0 \
+            odoo --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+                 --db_host=localhost --db_user=odoo --db_password=odoo -d ci_test \
+                 -i intervention_management --test-enable --test-tags=/intervention_management \
+                 --stop-after-init --log-level=test 2>&1 | tee odoo.log
+
+      - name: Vérification du résultat
+        run: |
+          grep -E "tests.result" odoo.log
+          grep -qE "0 failed, 0 error\(s\)" odoo.log
+          ! grep -E " (ERROR|CRITICAL) " odoo.log | grep -v "Unexpected indentation"
+
+  dashboard:
+    name: Tableau de bord React
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci
+      - run: npm run build

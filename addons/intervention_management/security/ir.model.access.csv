@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_intervention_technician_user,intervention.intervention technicien,model_intervention_intervention,group_intervention_technician,1,1,0,0
+access_intervention_manager,intervention.intervention responsable,model_intervention_intervention,group_intervention_manager,1,1,1,1
+access_intervention_line_technician,intervention.line technicien,model_intervention_line,group_intervention_technician,1,1,1,1
+access_intervention_line_manager,intervention.line responsable,model_intervention_line,group_intervention_manager,1,1,1,1
+access_technician_technician,intervention.technician technicien,model_intervention_technician,group_intervention_technician,1,0,0,0
+access_technician_manager,intervention.technician responsable,model_intervention_technician,group_intervention_manager,1,1,1,1

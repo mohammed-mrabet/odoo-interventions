@@ -1,0 +1,44 @@
+# docker compose up --build
+#   Odoo                  : http://localhost:8069   (admin / admin)
+#   Tableau de bord React : http://localhost:8080   (mêmes identifiants)
+# Premier démarrage : création de la base et installation du module avec ses données de démonstration (~1 min).
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  odoo:
+    image: odoo:17.0
+    # -i : installe le module (ou le met à jour) au démarrage ; --load-language : interface en français.
+    command: ["odoo", "-d", "interventions", "-i", "intervention_management", "--load-language=fr_FR"]
+    volumes:
+      - ./addons:/mnt/extra-addons:ro
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      - odoo-data:/var/lib/odoo
+    ports:
+      - "8069:8069"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8080:80"
+    depends_on:
+      - odoo
+
+volumes:
+  db-data:
+  odoo-data:

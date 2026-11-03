@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_intervention" model="ir.module.category">
+        <field name="name">Interventions</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Technicien : voit et met à jour uniquement ses propres interventions. -->
+    <record id="group_intervention_technician" model="res.groups">
+        <field name="name">Technicien</field>
+        <field name="category_id" ref="module_category_intervention"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Responsable : planifie et voit toutes les interventions. -->
+    <record id="group_intervention_manager" model="res.groups">
+        <field name="name">Responsable</field>
+        <field name="category_id" ref="module_category_intervention"/>
+        <field name="implied_ids" eval="[(4, ref('group_intervention_technician'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="rule_intervention_technician_own" model="ir.rule">
+        <field name="name">Technicien : ses interventions uniquement</field>
+        <field name="model_id" ref="model_intervention_intervention"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_intervention_technician'))]"/>
+    </record>
+
+    <record id="rule_intervention_manager_all" model="ir.rule">
+        <field name="name">Responsable : toutes les interventions</field>
+        <field name="model_id" ref="model_intervention_intervention"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_intervention_manager'))]"/>
+    </record>
+
+    <record id="rule_intervention_company" model="ir.rule">
+        <field name="name">Interventions : multi-société</field>
+        <field name="model_id" ref="model_intervention_intervention"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

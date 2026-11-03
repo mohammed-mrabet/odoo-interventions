@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Société de démonstration en dirhams -->
+    <record id="base.MAD" model="res.currency"><field name="active" eval="True"/></record>
+    <record id="base.main_company" model="res.company"><field name="currency_id" ref="base.MAD"/></record>
+    <record id="p_atlas" model="res.partner">
+        <field name="name">Atlas Distribution SARL</field><field name="is_company" eval="True"/>
+        <field name="street">12 boulevard Mohammed V</field><field name="city">Oujda</field><field name="phone">0536 12 34 56</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="p_oriental" model="res.partner">
+        <field name="name">Clinique Al Amal</field><field name="is_company" eval="True"/>
+        <field name="street">45 rue de Marrakech</field><field name="city">Oujda</field><field name="phone">0536 45 67 89</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="p_berkane" model="res.partner">
+        <field name="name">Berkane Agrumes Export</field><field name="is_company" eval="True"/>
+        <field name="street">Zone industrielle</field><field name="city">Berkane</field><field name="phone">0536 61 22 33</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="p_saidia" model="res.partner">
+        <field name="name">Hôtel Les Mimosas</field><field name="is_company" eval="True"/>
+        <field name="street">Front de mer</field><field name="city">Saïdia</field><field name="phone">0536 62 44 10</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="p_nador" model="res.partner">
+        <field name="name">Nador Logistique</field><field name="is_company" eval="True"/>
+        <field name="street">Port de Beni Ensar</field><field name="city">Nador</field><field name="phone">0536 33 90 12</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="p_lycee" model="res.partner">
+        <field name="name">Lycée Al Qods</field><field name="is_company" eval="True"/>
+        <field name="street">Avenue Allal El Fassi</field><field name="city">Oujda</field><field name="phone">0536 70 11 22</field>
+        <field name="country_id" ref="base.ma"/>
+    </record>
+    <record id="tech_youssef" model="intervention.technician">
+        <field name="name">Youssef Benali</field><field name="speciality">electricity</field><field name="phone">0661 00 11 22</field><field name="color" eval="1"/>
+    </record>
+    <record id="tech_salma" model="intervention.technician">
+        <field name="name">Salma Idrissi</field><field name="speciality">it</field><field name="phone">0662 33 44 55</field><field name="color" eval="4"/>
+    </record>
+    <record id="tech_karim" model="intervention.technician">
+        <field name="name">Karim Ouahbi</field><field name="speciality">hvac</field><field name="phone">0663 66 77 88</field><field name="color" eval="10"/>
+    </record>
+    <record id="tech_nadia" model="intervention.technician">
+        <field name="name">Nadia El Amrani</field><field name="speciality">plumbing</field><field name="phone">0664 99 00 11</field><field name="color" eval="7"/>
+    </record>
+    <record id="i1" model="intervention.intervention">
+        <field name="partner_id" ref="p_atlas"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">2</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Coupures électriques répétées dans l'entrepôt.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_youssef"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-20, hours=8, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-20, hours=8, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-20, hours=8, minutes=145)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Disjoncteur 20 A&quot;, 'quantity': 2, 'price_unit': 85}), (0, 0, {'name': &quot;Câble 2,5 mm² (m)&quot;, 'quantity': 15, 'price_unit': 9})]"/>
+    </record>
+    <record id="i2" model="intervention.intervention">
+        <field name="partner_id" ref="p_oriental"/>
+        <field name="intervention_type">maintenance</field>
+        <field name="priority">1</field>
+        <field name="duration_planned" eval="3"/>
+        <field name="description">&lt;p&gt;Maintenance trimestrielle des climatiseurs du bloc opératoire.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_karim"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-15, hours=9, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-15, hours=9, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-15, hours=9, minutes=205)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Filtre de climatiseur&quot;, 'quantity': 4, 'price_unit': 120})]"/>
+    </record>
+    <record id="i3" model="intervention.intervention">
+        <field name="partner_id" ref="p_lycee"/>
+        <field name="intervention_type">installation</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="4"/>
+        <field name="description">&lt;p&gt;Installation du Wi-Fi dans la salle informatique.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_salma"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-12, hours=7, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-12, hours=7, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-12, hours=7, minutes=265)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Point d'accès Wi-Fi&quot;, 'quantity': 3, 'price_unit': 950}), (0, 0, {'name': &quot;Câble RJ45 (m)&quot;, 'quantity': 40, 'price_unit': 6})]"/>
+    </record>
+    <record id="i4" model="intervention.intervention">
+        <field name="partner_id" ref="p_saidia"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">2</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Fuite d'eau chaude dans la chambre 112.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_nadia"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-8, hours=13, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-8, hours=13, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-8, hours=13, minutes=145)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Mitigeur thermostatique&quot;, 'quantity': 1, 'price_unit': 640})]"/>
+    </record>
+    <record id="i5" model="intervention.intervention">
+        <field name="partner_id" ref="p_berkane"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">3</field>
+        <field name="duration_planned" eval="3"/>
+        <field name="description">&lt;p&gt;Chambre froide en panne : température à 12 °C.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_karim"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-6, hours=8, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-6, hours=8, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-6, hours=8, minutes=205)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Gaz réfrigérant R410A (kg)&quot;, 'quantity': 3, 'price_unit': 180})]"/>
+    </record>
+    <record id="i6" model="intervention.intervention">
+        <field name="partner_id" ref="p_nador"/>
+        <field name="intervention_type">inspection</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="1.5"/>
+        <field name="description">&lt;p&gt;Contrôle annuel du réseau informatique.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_salma"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-4, hours=10, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">done</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-4, hours=10, minutes=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_end" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-4, hours=10, minutes=115)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="report_notes">&lt;p&gt;Intervention réalisée, essais concluants. Client informé.&lt;/p&gt;</field>
+    </record>
+    <record id="i7" model="intervention.intervention">
+        <field name="partner_id" ref="p_atlas"/>
+        <field name="intervention_type">maintenance</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Vérification des sanitaires du personnel.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_nadia"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-2, hours=8, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i8" model="intervention.intervention">
+        <field name="partner_id" ref="p_oriental"/>
+        <field name="intervention_type">inspection</field>
+        <field name="priority">1</field>
+        <field name="duration_planned" eval="1"/>
+        <field name="description">&lt;p&gt;Contrôle du groupe électrogène.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_youssef"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-1, hours=14, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i9" model="intervention.intervention">
+        <field name="partner_id" ref="p_saidia"/>
+        <field name="intervention_type">maintenance</field>
+        <field name="priority">1</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Maintenance des climatiseurs avant la saison.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_karim"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=0, hours=7, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">in_progress</field>
+        <field name="date_start" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=0, hours=7, minutes=5)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="line_ids" eval="[(0, 0, {'name': &quot;Filtre de climatiseur&quot;, 'quantity': 6, 'price_unit': 120})]"/>
+    </record>
+    <record id="i10" model="intervention.intervention">
+        <field name="partner_id" ref="p_lycee"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">2</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Prises électriques hors service au laboratoire.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_youssef"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=1, hours=8, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i11" model="intervention.intervention">
+        <field name="partner_id" ref="p_berkane"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">1</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Imprimante réseau inaccessible depuis la comptabilité.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_salma"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=1, hours=13, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i12" model="intervention.intervention">
+        <field name="partner_id" ref="p_nador"/>
+        <field name="intervention_type">installation</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="6"/>
+        <field name="description">&lt;p&gt;Installation de deux climatiseurs dans les bureaux du port.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_karim"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=3, hours=8, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i13" model="intervention.intervention">
+        <field name="partner_id" ref="p_atlas"/>
+        <field name="intervention_type">maintenance</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Mise à jour des postes de travail.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_salma"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=5, hours=9, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i14" model="intervention.intervention">
+        <field name="partner_id" ref="p_oriental"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">3</field>
+        <field name="duration_planned" eval="3"/>
+        <field name="description">&lt;p&gt;Canalisation bouchée au service des urgences.&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_nadia"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=2, hours=7, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">planned</field>
+    </record>
+    <record id="i15" model="intervention.intervention">
+        <field name="partner_id" ref="p_saidia"/>
+        <field name="intervention_type">installation</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="4"/>
+        <field name="description">&lt;p&gt;Installation d'un chauffe-eau solaire.&lt;/p&gt;</field>
+        <field name="state">draft</field>
+    </record>
+    <record id="i16" model="intervention.intervention">
+        <field name="partner_id" ref="p_lycee"/>
+        <field name="intervention_type">inspection</field>
+        <field name="priority">0</field>
+        <field name="duration_planned" eval="1"/>
+        <field name="description">&lt;p&gt;Contrôle des extincteurs et de l'éclairage de secours.&lt;/p&gt;</field>
+        <field name="state">draft</field>
+    </record>
+    <record id="i17" model="intervention.intervention">
+        <field name="partner_id" ref="p_berkane"/>
+        <field name="intervention_type">repair</field>
+        <field name="priority">1</field>
+        <field name="duration_planned" eval="2"/>
+        <field name="description">&lt;p&gt;Panne d'éclairage (résolue par le client).&lt;/p&gt;</field>
+        <field name="technician_id" ref="tech_youssef"/>
+        <field name="date_planned" eval="(DateTime.today().replace(hour=0, minute=0, second=0, microsecond=0) + relativedelta(days=-10, hours=9, minutes=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="state">cancel</field>
+    </record>
+</odoo>
